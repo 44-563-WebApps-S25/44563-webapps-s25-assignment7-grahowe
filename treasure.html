@@ -30,51 +30,96 @@
     <p>Click on locations to find silver and gold, watch out for the rattlesnake</p>
     <p id="locations">Number of locations checked is zero</p>
     <p id="score">Score is zero</p>
-    <p>Click for help</p>
-    <p id="help">Help Report</p>
+    <div id="help">Help Report</div>
+    <button onclick="help()">Click for help</button>
   </div>
 
-  <div class="game-container">
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
+  <div class="game-container"></div>
 
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
+  <script>
+    let ids = [];
+    let score = 0;
+    let locationsVisited = 0;
+    let lastLocation = 0;
+    let silverLocations = [2, 5, 11, 21, 32];
+    let goldLocation = 15;
+    let snakeLocation = 20;
+    let gameOver = false;
+    
+    function initializeGame() {
+      let container = document.querySelector('.game-container');
+      for (let i = 0; i < 35; i++) {
+        let img = document.createElement('img');
+        img.src = 'cactus.jpg'; // Default image
+        img.alt = 'Cactus';
+        img.width = 50;
+        img.height = 50;
+        img.id = 'img' + i;
+        img.onclick = function () { check(i); };
+        ids.push(img.id);
+        container.appendChild(img);
+      }
+    }
+    
+    function check(position) {
+      if (gameOver) return;
+      let img = document.getElementById(ids[position]);
 
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
+      if (img.dataset.clicked) return; // Prevents multiple clicks on the same image
+      img.dataset.clicked = true; // Marks this image as clicked
 
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
+      // Update the image source based on the location
+      if (position === goldLocation) {
+        img.src = 'gold.jpg';
+        score += 5;
+      } else if (silverLocations.includes(position)) {
+        img.src = 'silverCoin.jpg';
+        score += 3;
+      } else if (position === snakeLocation) {
+        img.src = 'snake.jpg';
+        score -= 3;
+        gameOver = true;
+        // Optionally, end the game with a small delay to show the snake
+        setTimeout(() => alert('Game Over! You were bitten by a snake.'), 500);
+      } else {
+        img.src = 'pottery.jpg';
+        score += 1;
+      }
 
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-    <div><img src="cactus.jpg" alt="Cactus" width="50" height="50"></div>
-  </div>
+      locationsVisited++;
+      lastLocation = position;
+      document.getElementById('locations').innerText = `Number of locations checked: ${locationsVisited}`;
+      document.getElementById('score').innerText = `Score: ${score}`;
+
+      if (!gameOver) {
+        lastLocation = position; // Ensures the last checked location is updated
+      }
+    }
+    
+    function help() {
+      let row = Math.floor(lastLocation / 7);
+      let col = lastLocation % 7;
+      let neighbors = [lastLocation - 1, lastLocation + 1, lastLocation - 7, lastLocation + 7];
+      
+      for (let neighbor of neighbors) {
+        if (silverLocations.includes(neighbor)) {
+          document.getElementById('help').innerText = 'clink';
+          return;
+        }
+      }
+      
+      let snakeRow = Math.floor(snakeLocation / 7);
+      let snakeCol = snakeLocation % 7;
+      if (Math.abs(snakeRow - row) <= 1 && Math.abs(snakeCol - col) <= 1) {
+        document.getElementById('help').innerText = 'rattle';
+      } else {
+        document.getElementById('help').innerText = 'wind';
+      }
+    }
+    
+    initializeGame();
+  </script>
+  
 
 
 </body>
