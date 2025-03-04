@@ -29,10 +29,10 @@
 		<h1>Owen Graham builds divs</h1>
 		<input type="text" id="textInput" placeholder="Enter text...">
 		<button onclick="addEnd()">Add End</button>
+		<button onclick="addFront()">Add Front</button>
+		<button onclick="remove()">Remove</button>
 		<div class="flex-container" id="target">
-			<div>row item 1</div>   
-			<div>row item 2</div>  
-			<div>row item 3</div>  
+			  
 		</div>
 		
 		<script>
@@ -48,6 +48,28 @@
 
 				let container = document.getElementById('target');
 				container.appendChild(element);
+			}
+
+			function addFront(){
+				let text = document.getElementById("textInput").value;
+				if (!text) return;
+
+				let element = document.createElement("div");
+				element.innerHTML = text;
+				element.className = "divlist";
+
+				let container = document.getElementById('target');
+				container.insertBefore(element, container.firstChild);
+			}
+
+			function remove(){
+				let divListItems = document.getElementsByClassName("divlist");
+				let length = divListItems.length;
+
+				if (length > 0){
+					let middleIdx = Math.floor(length/2);
+					divListItems[middleIdx].remove();
+				}
 			}
 		</script>
 		
